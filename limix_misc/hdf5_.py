@@ -198,6 +198,7 @@ class XBuffRows(object):
         self._col_slice = col_slice
         ncols = len(np.empty(X.shape[1])[col_slice])
         self._Xbuff = np.empty((len(row_indices), ncols), dtype=X.dtype)
+        self._arr_buff = np.empty(buff_size, dtype=X.dtype)
 
     def __iter__(self):
         return self
@@ -211,8 +212,9 @@ class XBuffRows(object):
                 self._X.read_direct(self._Xbuff, np.s_[sri,cs], np.s_[srii,:])
             except TypeError:
                 for (i, csi) in enumerate(cs):
-                    self._X.read_direct(self._Xbuff[np.s_[srii,i]], np.s_[sri,csi],
+                    self._X.read_direct(self._arr_buff, np.s_[sri,csi],
                                         np.s_[:])
+                    self._Xbuff[np.s_[srii,i]] = self._arr_buff
         else:
             self._Xbuff[:len(row_indices),:] = self._X[row_indices,cs]
 
