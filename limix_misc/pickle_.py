@@ -1,8 +1,10 @@
+from __future__ import absolute_import
 import gzip
 import cPickle
 import os
-from report import BeginEnd, ProgressBar
-import object_
+from .report import BeginEnd, ProgressBar
+from . import object_
+from . import path_
 from os.path import join
 from os.path import isdir
 
@@ -25,7 +27,7 @@ class PickleByName(object):
 
     def __setstate__(self, d):
         import importlib
-        
+
         for attr_name in d['_signature_only_attrs']:
             fn = d[attr_name + '_fullname']
             k = fn.rfind(".")
@@ -157,8 +159,6 @@ def _merge(file_list):
     return out
 
 def pickle_merge(folder, verbose=True):
-    import path_
-
     file_list = _get_file_list(folder)
 
     if len(file_list) == 0:
