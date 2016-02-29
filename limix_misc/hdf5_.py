@@ -234,37 +234,3 @@ class XBuffRows(object):
         self._row += 1
 
         return vec
-
-if __name__ == '__main__':
-    import numpy as np
-    random = np.random.RandomState(394873)
-    X = random.randn(10, 10)
-
-    with h5py.File('tmp.hdf5', 'w') as f:
-        f.create_dataset('X', data=X)
-
-    with h5py.File('tmp.hdf5', 'r') as f:
-        X = f['X']
-        row_indices = random.permutation(X.shape[0])
-        col_slice = np.s_[:4]
-        Xcopy = X[:][row_indices, col_slice].copy()
-
-        Xb = XBuffRows(X, row_indices, col_slice, buff_size=5000)
-        iterrows = iter(Xb)
-        i = 0
-        for row in iterrows:
-            np.testing.assert_almost_equal(Xcopy[i,:], row)
-            i += 1
-    # print row.next()
-    # print row.next()
-    # print row.next()
-    # print row.next()
-    # print row.next()
-    # print row.next()
-    # print row.next()
-    # print row.next()
-    # print row.next()
-    # print row.next()
-    # print row.next()
-    # print row.next()
-    # print row.next()
