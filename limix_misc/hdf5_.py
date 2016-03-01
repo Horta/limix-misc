@@ -252,3 +252,27 @@ class XBuffRows(object):
         self._row += 1
 
         return vec
+
+def do_convert_layout(args):
+    with h5py.File(args.filepath, 'r+') as f:
+        if args.type == 'row':
+            convert_matrices_to_row_layout(f)
+        elif args.type == 'col':
+            convert_matrices_to_col_layout(f)
+        else:
+            raise ValueError('Unknown layout type: %s.' % args.type)
+
+def entry_point():
+    from argparse import ArgumentParser
+    p = ArgumentParser()
+    sub = p.add_subparsers()
+
+    s = sub.add_parser('convert-layout')
+    s.add_argument('filepath')
+    s.add_argument('type')
+    s.set_defaults(func=do_convert_layout)
+
+    args = p.parse_args()
+    func = args.func
+    del args.func
+    func(args)

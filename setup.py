@@ -76,7 +76,10 @@ def setup_package():
         url='http://pmbio.github.io/limix/',
         install_requires=install_requires,
         setup_requires=setup_requires,
-        zip_safe=True
+        zip_safe=True,
+        entry_points={
+            'console_scripts': ['h5_ = limix_misc.hdf5_:entry_point']
+        }
     )
 
     if conda_present:
