@@ -21,7 +21,7 @@ def findnth(haystack, needle, n):
         return -1
     return len(haystack)-len(parts[-1])-len(needle)
 
-def _visititems(root, func, level=0, prefix=''):
+def visititems(root, func, level=0, prefix=''):
     if root.name != '/':
         name = root.name
         eman = name[::-1]
@@ -32,9 +32,9 @@ def _visititems(root, func, level=0, prefix=''):
         return
     for k in root.keys():
         if root.file == root[k].file:
-            _visititems(root[k], func, level+1, prefix)
+            visititems(root[k], func, level+1, prefix)
         else:
-            _visititems(root[k], func, 0, prefix + root.name)
+            visititems(root[k], func, 0, prefix + root.name)
 
 def _tree(f, root_name='/', ret=False):
     import asciitree
@@ -49,7 +49,7 @@ def _tree(f, root_name='/', ret=False):
             _names.append(name[1:])
 
     # f.visititems(get_names)
-    _visititems(f, get_names)
+    visititems(f, get_names)
     class Node(object):
         def __init__(self, name, children):
             self.name = name
@@ -101,38 +101,54 @@ def copy_memmap_h5dt(arr, dt):
             dt[r:re,:] = arr[r:re,:]
             r = re
 
-# import gc
-# def copy_h5dt_memmap(dt, arr):
-#     if arr.ndim > 2:
-#         raise Exception("I don't know how to handle arrays" +
-#                         " with more than 2 dimensions yet.")
-#     assert arr.shape == dt.shape
-#     if len(dt.shape) == 1:
-#         arr[:] = dt[:]
-#     else:
-#         if dt.chunks is not None:
-#             chunk_row = dt.chunks[0]
-#         else:
-#             chunk_row = 512
-#         r = 0
-#         # mem = np.empty((chunk_row, dt.shape[1]), dtype=arr.dtype)
-#         while r < dt.shape[0]:
-#             re = r + chunk_row
-#             re = min(re, dt.shape[0])
-#
-#
-#             # dt.read_direct(mem, np.s_[r:re,:], np.s_[0:(re-r),:])
-#
-#             # arr[r:re,:] = dt[r:re,:]
-#             # mem[:] = np.random.randn(mem.shape[0], mem.shape[1])
-#             # arr[r:re,:] = mem[0:(re-r),:]
-#             arr[r:re,:] = 1.
-#
-#             arr.flush()
-#             # dt.file.flush()
-#             gc.collect()
-#
-#             r = re
+def good_chunk(dataset):
+    if hasattr(dataset, 'chunks'):
+        return dataset.chunks
+    c = 256
+    ndim = len(dataset.shape)
+    chunks = (min(c, dataset.shape[i]) for i in range(ndim))
+    return chunks
+
+def change_layout(fp, path, chunks, compression='gzip'):
+    import dask.array as da
+
+    def do(f):
+        dataset = f[path]
+        gpath = os.path.dirname('/' + path)
+        g = f[gpath]
+
+        d = da.from_array(dataset, chunks=good_chunk(dataset))
+
+        name = os.path.basename(dataset.name)
+        tmp_name = name + '_tmp_cfm92askj3'
+        if tmp_name in g:
+            del g[tmp_name]
+        tmp_d = g.create_dataset(tmp_name, shape=dataset.shape,
+                             dtype=dataset.dtype, chunks=chunks,
+                             compression=compression)
+        da.store(d, tmp_d)
+
+        del g[name]
+        g[name] = g[tmp_name]
+        del g[tmp_name]
+
+    if isinstance(fp, str):
+        with h5py.File(fp, 'r+') as f:
+            do(f)
+    else:
+        do(fp)
+
+def convert_matrices_to_row_layout(f):
+    def foo(path, node, f):
+        if isinstance(node, h5py.Dataset) and len(node.shape) == 2:
+            change_layout(f, path, chunks=(1, node.shape[1]))
+    visititems(f, lambda path, node: foo(path, node, f))
+
+def convert_matrices_to_col_layout(f):
+    def foo(path, node, f):
+        if isinstance(node, h5py.Dataset) and len(node.shape) == 2:
+            change_layout(f, path, chunks=(node.shape[0], 1))
+    visititems(f, lambda path, node: foo(path, node, f))
 
 def copy_h5dt_memmap_filepath(dt, fp):
 
