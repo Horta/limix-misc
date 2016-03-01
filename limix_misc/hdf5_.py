@@ -262,10 +262,17 @@ def do_convert_layout(args):
         else:
             raise ValueError('Unknown layout type: %s.' % args.type)
 
+def do_see(args):
+    tree(args.filepath)
+
 def entry_point():
     from argparse import ArgumentParser
     p = ArgumentParser()
     sub = p.add_subparsers()
+
+    s = sub.add_parser('see')
+    s.add_argument('filepath')
+    s.set_defaults(func=do_see)
 
     s = sub.add_parser('convert-layout')
     s.add_argument('filepath')
