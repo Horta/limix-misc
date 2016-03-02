@@ -3,17 +3,18 @@ import numpy as np
 import os
 import tempfile
 import shutil
+import asciitree
 
 def fetch(fp, path):
     with h5py.File(fp, 'r') as f:
         return f[path][:]
 
-def tree(f_or_filepath, root_name='/', ret=False):
+def tree(f_or_filepath, root_name='/', ret=False, show_chunks=False):
     if isinstance(f_or_filepath, str):
         with h5py.File(f_or_filepath, 'r') as f:
-            return _tree(f, root_name, ret)
+            return _tree(f, root_name, ret, show_chunks)
     else:
-        return _tree(f_or_filepath, root_name, ret)
+        return _tree(f_or_filepath, root_name, ret, show_chunks)
 
 def findnth(haystack, needle, n):
     parts= haystack.split(needle, n+1)
@@ -36,15 +37,18 @@ def visititems(root, func, level=0, prefix=''):
         else:
             visititems(root[k], func, 0, prefix + root.name)
 
-def _tree(f, root_name='/', ret=False):
-    import asciitree
-
+def _tree(f, root_name='/', ret=False, show_chunks=False):
     _names = []
     def get_names(name, obj):
-        if isinstance(obj, h5py._hl.dataset.Dataset):
+        if isinstance(obj, h5py.Dataset):
             dtype = str(obj.dtype)
             shape = str(obj.shape)
-            _names.append("%s [%s, %s]" % (name[1:], dtype, shape))
+            if show_chunks:
+                chunks = str(obj.chunks)
+                _names.append("%s [%s, %s, %s]" % (name[1:], dtype, shape,
+                                                   chunks))
+            else:
+                _names.append("%s [%s, %s]" % (name[1:], dtype, shape))
         else:
             _names.append(name[1:])
 
@@ -138,16 +142,43 @@ def change_layout(fp, path, chunks, compression='gzip'):
     else:
         do(fp)
 
+def change_layout_greedy(fp, path, chunks, compression='lzf', shuffle=True):
+    def do(f):
+        dataset = f[path]
+        gpath = os.path.dirname('/' + path)
+        g = f[gpath]
+
+        d = dataset.value
+
+        name = os.path.basename(dataset.name)
+        tmp_name = name + '_tmp_cfm92askj3'
+        if tmp_name in g:
+            del g[tmp_name]
+
+        g.create_dataset(tmp_name, data=d, shape=dataset.shape,
+                         dtype=dataset.dtype, chunks=chunks,
+                         compression=compression, shuffle=shuffle)
+
+        del g[name]
+        g[name] = g[tmp_name]
+        del g[tmp_name]
+
+    if isinstance(fp, str):
+        with h5py.File(fp, 'r+') as f:
+            do(f)
+    else:
+        do(fp)
+
 def convert_matrices_to_row_layout(f):
     def foo(path, node, f):
         if isinstance(node, h5py.Dataset) and len(node.shape) == 2:
-            change_layout(f, path, chunks=(1, node.shape[1]))
+            change_layout_greedy(f, path, chunks=(1, node.shape[1]))
     visititems(f, lambda path, node: foo(path, node, f))
 
 def convert_matrices_to_col_layout(f):
     def foo(path, node, f):
         if isinstance(node, h5py.Dataset) and len(node.shape) == 2:
-            change_layout(f, path, chunks=(node.shape[0], 1))
+            change_layout_greedy(f, path, chunks=(node.shape[0], 1))
     visititems(f, lambda path, node: foo(path, node, f))
 
 def copy_h5dt_memmap_filepath(dt, fp):
@@ -263,7 +294,7 @@ def do_convert_layout(args):
             raise ValueError('Unknown layout type: %s.' % args.type)
 
 def do_see(args):
-    tree(args.filepath)
+    tree(args.filepath, show_chunks=args.show_chunks)
 
 def entry_point():
     from argparse import ArgumentParser
@@ -272,7 +303,9 @@ def entry_point():
 
     s = sub.add_parser('see')
     s.add_argument('filepath')
-    s.set_defaults(func=do_see)
+    s.add_argument('--show-chunks', dest='show_chunks', action='store_true')
+    s.add_argument('--no-show-chunks', dest='show_chunks', action='store_false')
+    s.set_defaults(func=do_see, show_chunks=False)
 
     s = sub.add_parser('convert-layout')
     s.add_argument('filepath')
