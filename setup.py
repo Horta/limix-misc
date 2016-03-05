@@ -3,8 +3,8 @@ import os
 import sys
 from setuptools import setup, find_packages
 
-PKG_NAME = 'limix_misc'
-VERSION  = '0.0.3'
+PKG_NAME = 'limix_util'
+VERSION  = '0.0.4'
 
 try:
     from distutils.command.bdist_conda import CondaDistribution
@@ -78,7 +78,7 @@ def setup_package():
         setup_requires=setup_requires,
         zip_safe=True,
         entry_points={
-            'console_scripts': ['h5_ = limix_misc.hdf5_:entry_point']
+            'console_scripts': ['h5_ = limix_util.hdf5_:entry_point']
         }
     )
 
