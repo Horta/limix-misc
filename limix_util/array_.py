@@ -4,7 +4,7 @@ from numba import jit
 def isint_alike(arr):
     return np.all(arr == np.asarray(arr, int))
 
-@jit(cached=True)
+@jit(cache=True)
 def _iscrescent(arr):
     i = 0
     while i < arr.shape[0]-1:
