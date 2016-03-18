@@ -4,7 +4,9 @@ import tempfile
 import shutil
 import os
 import subprocess
+import md5
 import sys
+from distutils.spawn import find_executable
 
 @contextlib.contextmanager
 def temp_folder():
@@ -93,3 +95,24 @@ def rrm(paths):
 def touch(fname, times=None):
     with open(fname, 'a'):
         os.utime(fname, times)
+
+def bin_exists(name):
+    return find_executable(name) is not None
+
+def folder_hash(folder, exclude_files=None):
+    if exclude_files is None:
+        exclude_files = []
+
+    if not bin_exists('m5deep'):
+        raise EnvironmentError("Couldn't not find m5deep.")
+
+    out = subprocess.check_output('md5deep -r %s' % folder, shell=True)
+    lines = sorted(out.strip('\n').split('\n'))
+
+    m = md5.new()
+    for line in lines:
+        hash_ = line[0:32]
+        fp = line[34:]
+        if os.path.basename(fp) not in exclude_files:
+            m.update(hash_)
+    return m.hexdigest()

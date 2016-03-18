@@ -158,19 +158,17 @@ def _merge(file_list):
     pbar.finish()
     return out
 
-def pickle_merge(folder, verbose=True):
+def pickle_merge(folder):
     file_list = _get_file_list(folder)
 
     if len(file_list) == 0:
-        print('   There is nothing to merge because no file'+
+        print('There is nothing to merge because no file'+
               ' has been found in %s.' % folder)
         return
 
     exist = os.path.exists(join(folder, 'all.pkl'))
 
     if exist and _has_valid_cache_folder(folder):
-        if verbose:
-            print("   Nothing to do because there is a valid cache.")
         return join(folder, 'all.pkl')
 
     with BeginEnd('Computing hashes'):
