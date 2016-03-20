@@ -2,7 +2,8 @@ from __future__ import absolute_import
 import gzip
 import cPickle
 import os
-from .report import BeginEnd, ProgressBar
+import collections
+from . import report
 from . import object_
 from . import path_
 from os.path import join
@@ -91,40 +92,40 @@ class SlotPickleMixin(object):
         return result
 
 def pickle(obj, filepath):
-    with gzip.open(filepath, 'wb', compresslevel=4) as f:
+    with gzip.open(filepath, 'wb', compresslevel=9) as f:
         cPickle.dump(obj, f, -1)
 
 def unpickle(filepath):
-    with gzip.open(filepath, 'rb', compresslevel=4) as f:
+    with gzip.open(filepath, 'rb', compresslevel=9) as f:
         return cPickle.load(f)
 
-def _lastmodif_hash_folder(folder, exclude_files=None):
-    import md5
-    import subprocess
+# def _lastmodif_hash_folder(folder, exclude_files=None):
+#     import md5
+#     import subprocess
+#
+#     if exclude_files is None:
+#         exclude_files = []
+#     out = subprocess.check_output('md5deep -r %s' % folder, shell=True)
+#     lines = sorted(out.strip('\n').split('\n'))
+#
+#     m = md5.new()
+#     for line in lines:
+#         hash_ = line[0:32]
+#         fp = line[34:]
+#         if os.path.basename(fp) not in exclude_files:
+#             m.update(hash_)
+#     return m.hexdigest()
 
-    if exclude_files is None:
-        exclude_files = []
-    out = subprocess.check_output('md5deep -r %s' % folder, shell=True)
-    lines = sorted(out.strip('\n').split('\n'))
-
-    m = md5.new()
-    for line in lines:
-        hash_ = line[0:32]
-        fp = line[34:]
-        if os.path.basename(fp) not in exclude_files:
-            m.update(hash_)
-    return m.hexdigest()
-
-def _has_valid_cache_folder(folder):
-    fc = join(folder, '.merge_cache')
-    if not os.path.exists(fc):
-        return False
-    with open(fc, 'r') as f:
-        hprev = f.read()
-
-    hnext = _lastmodif_hash_folder(folder, ['all.pkl', '.merge_cache'])
-
-    return hprev == hnext
+# def _has_valid_cache_folder(folder):
+#     fc = join(folder, '.merge_cache')
+#     if not os.path.exists(fc):
+#         return False
+#     with open(fc, 'r') as f:
+#         hprev = f.read()
+#
+#     hnext = _lastmodif_hash_folder(folder, ['all.pkl', '.merge_cache'])
+#
+#     return hprev == hnext
 
 def _save_cache(folder, lastmodif_hash):
     fpath = join(folder, '.merge_cache')
@@ -143,9 +144,7 @@ def _get_file_list(folder):
     return file_list
 
 def _merge(file_list):
-    import collections
-
-    pbar = ProgressBar(len(file_list))
+    pbar = report.ProgressBar(len(file_list))
     out = dict()
     for (i, fpath) in enumerate(file_list):
         d = unpickle(fpath)
@@ -166,13 +165,8 @@ def pickle_merge(folder):
               ' has been found in %s.' % folder)
         return
 
-    exist = os.path.exists(join(folder, 'all.pkl'))
-
-    if exist and _has_valid_cache_folder(folder):
-        return join(folder, 'all.pkl')
-
-    with BeginEnd('Computing hashes'):
-        h = _lastmodif_hash_folder(folder, ['all.pkl', '.merge_cache'])
+    with report.BeginEnd('Computing hashes'):
+        ha = path_.folder_hash(folder, ['all.pkl', '.folder_hash'])
 
     subfolders = [d for d in os.listdir(folder) if isdir(join(folder, d))]
 
@@ -182,11 +176,11 @@ def pickle_merge(folder):
             path_.cp(join(folder, sf), join(tf, sf))
         file_list = _get_file_list(tf)
 
-        with BeginEnd('Merging pickles'):
+        with report.BeginEnd('Merging pickles'):
             out = _merge(file_list)
 
-    with BeginEnd('Storing pickles'):
+    with report.BeginEnd('Storing pickles'):
         pickle(out, join(folder, 'all.pkl'))
-    _save_cache(folder, h)
+    _save_cache(folder, ha)
 
     return join(folder, 'all.pkl')
