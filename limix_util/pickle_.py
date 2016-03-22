@@ -183,4 +183,4 @@ def pickle_merge(folder):
         pickle(out, join(folder, 'all.pkl'))
     _save_cache(folder, ha)
 
-    return join(folder, 'all.pkl')
+    return out
