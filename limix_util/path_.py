@@ -103,8 +103,8 @@ def folder_hash(folder, exclude_files=None):
     if exclude_files is None:
         exclude_files = []
 
-    if not bin_exists('m5deep'):
-        raise EnvironmentError("Couldn't not find m5deep.")
+    if not bin_exists('md5deep'):
+        raise EnvironmentError("Couldn't not find md5deep.")
 
     out = subprocess.check_output('md5deep -r %s' % folder, shell=True)
     lines = sorted(out.strip('\n').split('\n'))
