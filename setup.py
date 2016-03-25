@@ -4,7 +4,7 @@ import sys
 from setuptools import setup, find_packages
 
 PKG_NAME = 'limix_util'
-VERSION  = '0.0.7'
+VERSION  = '0.0.8'
 
 try:
     from distutils.command.bdist_conda import CondaDistribution
@@ -32,6 +32,14 @@ try:
 except ImportError:
     print("Warning: h5py package couldn't be found."+
           " We can proceed but hdf5 features of this package will be disabled.")
+
+try:
+    import numba
+except ImportError:
+    print("Error: numba package couldn't be found."+
+          " Please, install it so I can proceed.")
+    sys.exit(1)
+
 
 def get_test_suite():
     from unittest import TestLoader
@@ -62,7 +70,7 @@ def setup_package():
 
     write_version()
 
-    install_requires = ['humanfriendly', 'progressbar', 'asciitree', 'numba']
+    install_requires = ['humanfriendly', 'progressbar2', 'asciitree']
     setup_requires = []
 
     metadata = dict(
