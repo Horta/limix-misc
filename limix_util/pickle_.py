@@ -128,7 +128,7 @@ def unpickle(filepath):
 #     return hprev == hnext
 
 def _save_cache(folder, lastmodif_hash):
-    fpath = join(folder, '.merge_cache')
+    fpath = join(folder, '.folder_hash')
     with open(fpath, 'w') as f:
         f.write(lastmodif_hash)
 
