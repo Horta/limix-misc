@@ -4,7 +4,7 @@ import tempfile
 import shutil
 import os
 import subprocess
-import md5
+import hashlib
 import sys
 from distutils.spawn import find_executable
 
@@ -109,7 +109,7 @@ def folder_hash(folder, exclude_files=None):
     out = subprocess.check_output('md5deep -r %s' % folder, shell=True)
     lines = sorted(out.strip('\n').split('\n'))
 
-    m = md5.new()
+    m = hashlib.md5()
     for line in lines:
         hash_ = line[0:32]
         fp = line[34:]
