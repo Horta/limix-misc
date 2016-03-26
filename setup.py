@@ -4,7 +4,7 @@ import sys
 from setuptools import setup, find_packages
 
 PKG_NAME = 'limix_util'
-VERSION  = '0.0.9'
+VERSION  = '0.0.10'
 
 try:
     from distutils.command.bdist_conda import CondaDistribution
