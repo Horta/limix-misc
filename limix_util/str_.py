@@ -22,4 +22,4 @@ def summarize(s, n=64):
     return s[:int(n/2)-2] + ' ... ' + s[-int(math.ceil(n/2))+3:]
 
 if __name__ == '__main__':
-    print summarize('danilo horta danilo horta danilo horta danilo horta')
+    print(summarize('danilo horta danilo horta danilo horta danilo horta'))

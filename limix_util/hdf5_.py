@@ -84,7 +84,7 @@ def _tree(f, root_name='/', ret=False, show_chunks=False):
     msg = asciitree.draw_tree(root, child_iter)
     if ret:
         return msg
-    print msg
+    print(msg)
 
 def copy_memmap_h5dt(arr, dt):
     if arr.ndim > 2:

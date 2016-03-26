@@ -1,3 +1,4 @@
+from __future__ import print_function
 import contextlib
 import errno
 import tempfile
@@ -37,7 +38,8 @@ class TmpFileCopy(object):
                                   shell=True)
 
         if retcode < 0:
-            print >>sys.stderr, "Child was terminated by signal", -retcode
+            print("Child was terminated by signal %d" % retcode,
+                  file=sys.stderr)
             raise Exception('Could not copy %s.' % self._path)
 
         self._dst = dst
@@ -49,7 +51,8 @@ class TmpFileCopy(object):
                                       shell=True)
 
             if retcode < 0:
-                print >>sys.stderr, "Child was terminated by signal", -retcode
+                print("Child was terminated by signal %d" % retcode,
+                      file=sys.stderr)
                 raise Exception('Could not copy %s back.' % self._dst)
         shutil.rmtree(self._folder)
 
@@ -79,7 +82,8 @@ def cp(folder_src, folder_dst):
                               shell=True)
 
     if retcode < 0:
-        print >>sys.stderr, "Child was terminated by signal", -retcode
+        print("Child was terminated by signal %d" % retcode,
+              file=sys.stderr)
 
 def rrm(paths):
     paths = paths if isinstance(paths, list) else [paths]
@@ -90,7 +94,8 @@ def rrm(paths):
     retcode = subprocess.call(cmd, shell=True)
 
     if retcode < 0:
-        print >>sys.stderr, "Child was terminated by signal", -retcode
+        print("Child was terminated by signal %d" % retcode,
+              file=sys.stderr)
 
 def touch(fname, times=None):
     with open(fname, 'a'):

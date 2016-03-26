@@ -14,4 +14,4 @@ class Timer(object):
     def __exit__(self, type_, value_, traceback_):
         self.elapsed = time.time() - self._tstart
         if self._verbose:
-            print 'Elapsed time: %s.' % hf.format_timespan(self.elapsed)
+            print('Elapsed time: %s.' % hf.format_timespan(self.elapsed))
