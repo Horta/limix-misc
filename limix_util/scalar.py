@@ -17,3 +17,6 @@ def isint(value):
         return float(value) == int(value)
     except ValueError:
         return False
+
+def isnumber(value):
+    return isfloat(value) or isint(value)

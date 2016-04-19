@@ -4,7 +4,7 @@ import sys
 from setuptools import setup, find_packages
 
 PKG_NAME = 'limix_util'
-VERSION  = '0.0.11'
+VERSION  = '0.0.12'
 
 try:
     from distutils.command.bdist_conda import CondaDistribution
@@ -66,7 +66,8 @@ def setup_package():
 
     write_version()
 
-    install_requires = ['humanfriendly', 'progressbar2', 'asciitree']
+    install_requires = ['humanfriendly', 'progressbar2', 'asciitree',
+                        'sortedcontainers']
     setup_requires = []
 
     metadata = dict(
