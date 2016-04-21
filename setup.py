@@ -66,8 +66,7 @@ def setup_package():
 
     write_version()
 
-    install_requires = ['humanfriendly', 'progressbar2', 'asciitree',
-                        'sortedcontainers']
+    install_requires = ['humanfriendly', 'progressbar2', 'asciitree']
     setup_requires = []
 
     metadata = dict(
