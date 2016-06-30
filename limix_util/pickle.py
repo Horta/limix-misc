@@ -1,6 +1,9 @@
 from __future__ import absolute_import
 import gzip
-import cPickle
+try:
+    import cPickle as pickle_
+except ImportError:
+    import pickle as pickle_
 import os
 import collections
 from . import report
@@ -93,11 +96,11 @@ class SlotPickleMixin(object):
 
 def pickle(obj, filepath):
     with gzip.open(filepath, 'wb', compresslevel=9) as f:
-        cPickle.dump(obj, f, -1)
+        pickle_.dump(obj, f, -1)
 
 def unpickle(filepath):
     with gzip.open(filepath, 'rb', compresslevel=9) as f:
-        return cPickle.load(f)
+        return pickle_.load(f)
 
 def _save_cache(folder, lastmodif_hash):
     fpath = join(folder, '.folder_hash')
