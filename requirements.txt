@@ -1,3 +1,3 @@
 humanfriendly
-progressbar
+progressbar2
 asciitree
