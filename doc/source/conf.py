@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # limix-util documentation build configuration file, created by
-# sphinx-quickstart on Wed Jun 29 17:56:23 2016.
+# sphinx-quickstart on Thu Jun 30 14:44:53 2016.
 #
 # This file is execfile()d with the current directory set to its
 # containing dir.
@@ -18,7 +18,7 @@ import os
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.abspath('../'))
+sys.path.insert(0, os.path.abspath('../..'))
 
 # -- General configuration ------------------------------------------------
 
@@ -81,7 +81,7 @@ language = None
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['_build']
+exclude_patterns = []
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
@@ -362,5 +362,4 @@ epub_exclude_files = ['search.html']
 
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'https://docs.python.org/': None,
-                       'numpy': ('http://docs.scipy.org/doc/numpy/', None)}
+intersphinx_mapping = {'https://docs.python.org/': None}
