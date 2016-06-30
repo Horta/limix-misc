@@ -3,6 +3,8 @@
 # Modified from original source, available here:
 # http://code.activestate.com/recipes/577624-orderedset/
 
+from __future__ import absolute_import
+
 try:
     import collections.abc as collections # Python 3
 except ImportError:
@@ -10,7 +12,7 @@ except ImportError:
 
 
 class OrderedSet(collections.MutableSet):
-    '''Set that remembers original insertion order.'''
+    """Set that remembers original insertion order."""
 
     KEY, PREV, NEXT = range(3)
 
