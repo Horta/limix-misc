@@ -13,7 +13,7 @@ addons:
       - libc6
       - g++
       - gfortran
-      - hdf5-tools
+      - libhdf5-serial-dev
 
 python:
   - 2.7
