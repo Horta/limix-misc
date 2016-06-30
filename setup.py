@@ -20,7 +20,8 @@ def setup_package():
     os.chdir(src_path)
     sys.path.insert(0, src_path)
 
-    install_requires = ['humanfriendly', 'progressbar', 'asciitree']
+    with open('requirements.txt') as f:
+        install_requires = [row.strip() for row in f.readlines()]
     setup_requires = []
 
     metadata = dict(
@@ -55,9 +56,11 @@ if __name__ == '__main__':
         msg += " Please, install it first so I can proceed."
         return msg
 
-    for pn in ['numpy', 'hdf5']:
-        if not module_exists(pn):
-            print(err_msg(pn))
-            sys.exit(1)
+    with open('requirements-pre-setup.txt') as f:
+        requires = [row.strip() for row in f.readlines()]
+        for pkg in requires:
+            if not module_exists(pkg):
+                print(err_msg(pkg))
+                sys.exit(1)
 
     setup_package()
