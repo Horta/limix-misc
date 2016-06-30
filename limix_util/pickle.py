@@ -4,8 +4,8 @@ import cPickle
 import os
 import collections
 from . import report
-from . import object_
-from . import path_
+from . import object as object_
+from . import path
 from os.path import join
 from os.path import isdir
 
@@ -99,34 +99,6 @@ def unpickle(filepath):
     with gzip.open(filepath, 'rb', compresslevel=9) as f:
         return cPickle.load(f)
 
-# def _lastmodif_hash_folder(folder, exclude_files=None):
-#     import md5
-#     import subprocess
-#
-#     if exclude_files is None:
-#         exclude_files = []
-#     out = subprocess.check_output('md5deep -r %s' % folder, shell=True)
-#     lines = sorted(out.strip('\n').split('\n'))
-#
-#     m = md5.new()
-#     for line in lines:
-#         hash_ = line[0:32]
-#         fp = line[34:]
-#         if os.path.basename(fp) not in exclude_files:
-#             m.update(hash_)
-#     return m.hexdigest()
-
-# def _has_valid_cache_folder(folder):
-#     fc = join(folder, '.merge_cache')
-#     if not os.path.exists(fc):
-#         return False
-#     with open(fc, 'r') as f:
-#         hprev = f.read()
-#
-#     hnext = _lastmodif_hash_folder(folder, ['all.pkl', '.merge_cache'])
-#
-#     return hprev == hnext
-
 def _save_cache(folder, lastmodif_hash):
     fpath = join(folder, '.folder_hash')
     with open(fpath, 'w') as f:
@@ -158,6 +130,8 @@ def _merge(file_list):
     return out
 
 def pickle_merge(folder):
+    """Merges pickle files from the specified folder and save it to `all.pkl`.
+    """
     file_list = _get_file_list(folder)
 
     if len(file_list) == 0:
@@ -166,14 +140,14 @@ def pickle_merge(folder):
         return
 
     with report.BeginEnd('Computing hashes'):
-        ha = path_.folder_hash(folder, ['all.pkl', '.folder_hash'])
+        ha = path.folder_hash(folder, ['all.pkl', '.folder_hash'])
 
     subfolders = [d for d in os.listdir(folder) if isdir(join(folder, d))]
 
-    with path_.temp_folder() as tf:
+    with path.temp_folder() as tf:
         for sf in subfolders:
-            path_.make_sure_path_exists(join(tf, sf))
-            path_.cp(join(folder, sf), join(tf, sf))
+            path.make_sure_path_exists(join(tf, sf))
+            path.cp(join(folder, sf), join(tf, sf))
         file_list = _get_file_list(tf)
 
         with report.BeginEnd('Merging pickles'):

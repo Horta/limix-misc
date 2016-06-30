@@ -57,8 +57,7 @@ class TmpFileCopy(object):
         shutil.rmtree(self._folder)
 
 class ChDir(object):
-    """
-    Step into a directory temporarily.
+    """Steps into a directory temporarily.
     """
     def __init__(self, path):
         self.old_dir = os.getcwd()
@@ -71,6 +70,8 @@ class ChDir(object):
         os.chdir(self.old_dir)
 
 def make_sure_path_exists(path):
+    """Creates a path recursively if necessary.
+    """
     try:
         os.makedirs(path)
     except OSError as exc:
@@ -78,6 +79,8 @@ def make_sure_path_exists(path):
             raise
 
 def cp(folder_src, folder_dst):
+    """Uses cp shell command to copy files from a folder to another.
+    """
     retcode = subprocess.call("cp " + folder_src + "/* " + folder_dst,
                               shell=True)
 
@@ -86,6 +89,8 @@ def cp(folder_src, folder_dst):
               file=sys.stderr)
 
 def rrm(paths):
+    """Uses rm shell command to remove files.
+    """
     paths = paths if isinstance(paths, list) else [paths]
     if len(paths) == 0:
         return
@@ -98,13 +103,19 @@ def rrm(paths):
               file=sys.stderr)
 
 def touch(fname, times=None):
+    """Creates an empty file.
+    """
     with open(fname, 'a'):
         os.utime(fname, times)
 
 def bin_exists(name):
+    """Checks whether an executable file exists.
+    """
     return find_executable(name) is not None
 
 def folder_hash(folder, exclude_files=None):
+    """Recursively compute the hash of all files in a folder and sum it up.
+    """
     if exclude_files is None:
         exclude_files = []
 

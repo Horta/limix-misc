@@ -1,3 +1,12 @@
+"""
+.. module:: hdf5
+   :synopsis: Querying hdf5 files.
+
+.. moduleauthor:: Danilo Horta <horta@ebi.ac.uk>
+
+
+"""
+
 import h5py
 import numpy as np
 import os
@@ -5,37 +14,53 @@ import tempfile
 import shutil
 import asciitree
 
+
 def fetch(fp, path):
+    """Fetches an array from hdf5 file.
+
+    :param str fp: hdf5 file path.
+    :param str path: path inside the hdf5 file.
+    :returns: An :class:`numpy.ndarray` representation of the corresponding hdf5 dataset.
+    """
     with h5py.File(fp, 'r') as f:
         return f[path][:]
 
 def tree(f_or_filepath, root_name='/', ret=False, show_chunks=False):
+    """Shows a human-friendly tree representation of the contents of
+    a hdf5 file.
+
+    :param f_or_filepath: hdf5 file path or a reference to an open one.
+    :param str root_name: group to be the root of the tree.
+    :param bool ret: Whether to return a string or print it.
+    :param bool show_chunks: show the chunks.
+    :returns str: String representation if is `ret=True`.
+    """
     if isinstance(f_or_filepath, str):
         with h5py.File(f_or_filepath, 'r') as f:
             return _tree(f, root_name, ret, show_chunks)
     else:
         return _tree(f_or_filepath, root_name, ret, show_chunks)
 
-def findnth(haystack, needle, n):
+def _findnth(haystack, needle, n):
     parts= haystack.split(needle, n+1)
     if len(parts)<=n+1:
         return -1
     return len(haystack)-len(parts[-1])-len(needle)
 
-def visititems(root, func, level=0, prefix=''):
+def _visititems(root, func, level=0, prefix=''):
     if root.name != '/':
         name = root.name
         eman = name[::-1]
-        i1 = findnth(eman, '/', level)
+        i1 = _findnth(eman, '/', level)
         name = '/' + eman[:i1][::-1]
         func(prefix + name, root)
     if not hasattr(root, 'keys'):
         return
     for k in root.keys():
         if root.file == root[k].file:
-            visititems(root[k], func, level+1, prefix)
+            _visititems(root[k], func, level+1, prefix)
         else:
-            visititems(root[k], func, 0, prefix + root.name)
+            _visititems(root[k], func, 0, prefix + root.name)
 
 def _tree(f, root_name='/', ret=False, show_chunks=False):
     _names = []
@@ -52,8 +77,8 @@ def _tree(f, root_name='/', ret=False, show_chunks=False):
         else:
             _names.append(name[1:])
 
-    # f.visititems(get_names)
-    visititems(f, get_names)
+    # f._visititems(get_names)
+    _visititems(f, get_names)
     class Node(object):
         def __init__(self, name, children):
             self.name = name
@@ -87,6 +112,7 @@ def _tree(f, root_name='/', ret=False, show_chunks=False):
     print(msg)
 
 def copy_memmap_h5dt(arr, dt):
+    """Copies a :class:`numpy.memmap` to a hdf5 dataset."""
     if arr.ndim > 2:
         raise Exception("I don't know how to handle arrays" +
                         " with more than 2 dimensions yet.")
@@ -105,7 +131,7 @@ def copy_memmap_h5dt(arr, dt):
             dt[r:re,:] = arr[r:re,:]
             r = re
 
-def good_chunk(dataset):
+def _good_chunk(dataset):
     if hasattr(dataset, 'chunks'):
         return dataset.chunks
     c = 256
@@ -121,7 +147,7 @@ def change_layout(fp, path, chunks, compression='gzip'):
         gpath = os.path.dirname('/' + path)
         g = f[gpath]
 
-        d = da.from_array(dataset, chunks=good_chunk(dataset))
+        d = da.from_array(dataset, chunks=_good_chunk(dataset))
 
         name = os.path.basename(dataset.name)
         tmp_name = name + '_tmp_cfm92askj3'
@@ -173,13 +199,13 @@ def convert_matrices_to_row_layout(f):
     def foo(path, node, f):
         if isinstance(node, h5py.Dataset) and len(node.shape) == 2:
             change_layout_greedy(f, path, chunks=(1, node.shape[1]))
-    visititems(f, lambda path, node: foo(path, node, f))
+    _visititems(f, lambda path, node: foo(path, node, f))
 
 def convert_matrices_to_col_layout(f):
     def foo(path, node, f):
         if isinstance(node, h5py.Dataset) and len(node.shape) == 2:
             change_layout_greedy(f, path, chunks=(node.shape[0], 1))
-    visititems(f, lambda path, node: foo(path, node, f))
+    _visititems(f, lambda path, node: foo(path, node, f))
 
 def copy_h5dt_memmap_filepath(dt, fp):
 
