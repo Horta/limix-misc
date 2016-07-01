@@ -1,4 +1,4 @@
 humanfriendly
 progressbar2
 asciitree
-h5py
+mock
