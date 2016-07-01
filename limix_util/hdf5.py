@@ -140,6 +140,7 @@ def _good_chunk(dataset):
     return chunks
 
 def change_layout(fp, path, chunks, compression='gzip'):
+    """Changes layout of a HDF5 dataset."""
     import dask.array as da
 
     def do(f):
@@ -169,6 +170,7 @@ def change_layout(fp, path, chunks, compression='gzip'):
         do(fp)
 
 def change_layout_greedy(fp, path, chunks, compression='lzf', shuffle=True):
+    """Changes layout of a HDF5 dataset, in a greedy manner."""
     def do(f):
         dataset = f[path]
         gpath = os.path.dirname('/' + path)
@@ -196,18 +198,21 @@ def change_layout_greedy(fp, path, chunks, compression='lzf', shuffle=True):
         do(fp)
 
 def convert_matrices_to_row_layout(f):
+    """Changes layout of a HDF5 2-by-2 dataset into C-matrix layout."""
     def foo(path, node, f):
         if isinstance(node, h5py.Dataset) and len(node.shape) == 2:
             change_layout_greedy(f, path, chunks=(1, node.shape[1]))
     _visititems(f, lambda path, node: foo(path, node, f))
 
 def convert_matrices_to_col_layout(f):
+    """Changes layout of a HDF5 2-by-2 dataset into Fortran-matrix layout."""
     def foo(path, node, f):
         if isinstance(node, h5py.Dataset) and len(node.shape) == 2:
             change_layout_greedy(f, path, chunks=(node.shape[0], 1))
     _visititems(f, lambda path, node: foo(path, node, f))
 
 def copy_h5dt_memmap_filepath(dt, fp):
+    """Copies a HDF5 dataset to a `numpy.memmap`."""
 
     arr = np.memmap(fp, mode='w+', shape=dt.shape, dtype=dt.dtype)
     if arr.ndim > 2:
@@ -235,6 +240,7 @@ def copy_h5dt_memmap_filepath(dt, fp):
             del arr
 
 class Memmap(object):
+    """Represents a HDF5 dataset as a `numpy.memmap`."""
     def __init__(self, filepath, path, readonly=True, tmp_folder=None):
         self._filepath = filepath
         self._path = path
@@ -261,6 +267,7 @@ class Memmap(object):
         shutil.rmtree(self._folder)
 
 class XBuffRows(object):
+    """Interates over HDF5 dataset rows, buffering beforehand."""
     def __init__(self, X, row_indices, col_slice, buff_size=1000):
         buff_size = min(buff_size, X.shape[0])
         self._X = X

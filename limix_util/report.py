@@ -1,8 +1,10 @@
+from __future__ import absolute_import
 import progressbar as pbm
 from time import time
 import sys
 
 class ProgressBar(object):
+    """Wrapper around `progressbar.Progressbar` to make it easier to use."""
     def __init__(self, n):
         self._pb = pbm.ProgressBar(widgets=[pbm.Percentage(), pbm.Bar()],
                                    maxval=n).start()
@@ -14,6 +16,7 @@ class ProgressBar(object):
         self._pb.finish()
 
 class BeginEnd(object):
+    """Prints message before and after the end of block of code."""
     def __init__(self, task, silent=False):
         self._task = str(task)
         self._start = None

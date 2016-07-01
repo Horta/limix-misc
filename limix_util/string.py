@@ -3,6 +3,7 @@ import numpy as np
 import math
 
 def array2string(a):
+    """Represents a `numpy.ndarray` as a string, in a summarized manner."""
     a = np.asarray(a)
     if len(a) <= 4:
         return np.array2string(a, 43)
@@ -14,6 +15,7 @@ def array2string(a):
     return left + ' ... ' + right
 
 def summarize(s, n=64):
+    """Summarizes a long message."""
     assert n > 6
     s = str(s)
     if len(s) < n:

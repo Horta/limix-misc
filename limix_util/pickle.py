@@ -13,6 +13,8 @@ from os.path import join
 from os.path import isdir
 
 class PickleByName(object):
+    """Makes un-pickle-able objects pick-able by setting its un-pickle-able
+    attributes as signature only attributes."""
     def __init__(self):
         self._signature_only_attrs = set()
 

@@ -3,6 +3,9 @@ import time
 import humanfriendly as hf
 
 class Timer(object):
+    """Prints the elapsed time after the execution of a block of code
+       finishes.
+    """
     def __init__(self, verbose=True):
         self._verbose = verbose
         self._tstart = None

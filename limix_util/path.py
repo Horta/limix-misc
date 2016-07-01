@@ -21,6 +21,7 @@ def count_lines(filepath):
     return sum(1 for line in open(filepath, 'r'))
 
 class TmpFileCopy(object):
+    """Creates a temporary file copy."""
     def __init__(self, path, copy_back=False):
         self._dst = None
         self._path = path

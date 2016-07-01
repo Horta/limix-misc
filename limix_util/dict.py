@@ -7,6 +7,7 @@ def _fetch_all_group_values(olist, group_name):
     return list(values)
 
 def group_by(olist, group_names, sort_key=None):
+    """Groups list elements."""
     if not isinstance(group_names, list):
         group_names = [group_names]
 
@@ -28,6 +29,7 @@ def group_by(olist, group_names, sort_key=None):
     return grouped
 
 def traverse_dict(d, visit_func, opt=None):
+    """Recursively visits each dict value."""
     opts = visit_func(d, opt)
     if isinstance(d, dict):
         i = 0
