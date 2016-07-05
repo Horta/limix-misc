@@ -16,3 +16,16 @@ from . import set
 from . import string
 from . import sys
 from . import time
+
+from . import dict as dict_
+from . import hdf5 as hdf5_
+from . import inspect as inspect_
+from . import object as object_
+from . import path as path_
+from . import pickle as pickle_
+from . import report as report_
+from . import scalar as scalar_
+from . import set as set_
+from . import string as string_
+from . import sys as sys_
+from . import time as time_
