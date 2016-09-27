@@ -269,7 +269,7 @@ class Memmap(object):
 class XBuffRows(object):
     """Interates over HDF5 dataset rows, buffering beforehand."""
     def __init__(self, X, row_indices, col_slice, buff_size=1000):
-        buff_size = min(buff_size, X.shape[0])
+        buff_size = min(min(buff_size, X.shape[0]), len(row_indices))
         self._X = X
         self._row = 0
         self._row_buff = -1
