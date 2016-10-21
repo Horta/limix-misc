@@ -1,28 +1,49 @@
 language: python
-sudo: false
-
-cache:
-  - pip
-  - apt
-
-addons:
-  apt:
-    packages:
-      - build-essential
-      - python-dev
-      - libc6
-      - g++
-      - gfortran
-      - libhdf5-serial-dev
-
-python:
-  - 2.7
-  - 3.3
-  - 3.4
-  - 3.5
-
+matrix:
+  include:
+  - os: linux
+    sudo: false
+    dist: trusty
+    python: '2.7'
+  - os: linux
+    sudo: false
+    dist: trusty
+    python: '3.4'
+  - os: linux
+    sudo: false
+    dist: trusty
+    python: '3.5'
+  - os: osx
+    language: generic
+    env: TRAVIS_PYTHON_VERSION=3.5
+before_install:
+- wget https://raw.githubusercontent.com/Horta/travis-miniconda/master/install.sh
+  -O install.sh
+- chmod +x install.sh
+- travis_retry bash -x ./install.sh
 install:
-    - pip install h5py
-    - pip install -r requirements.txt
-
-script: py.test .
+- export PATH="$HOME/miniconda/bin:$PATH"
+- source activate travisci
+- travis_retry conda install pycparser -y --name travisci
+before_script:
+- export PATH="$HOME/miniconda/bin:$PATH"
+- source activate travisci
+- python setup.py test
+script:
+- export PATH="$HOME/miniconda/bin:$PATH"
+- source activate travisci
+- python setup.py sdist
+- pip install dist/`ls dist | grep -i -E '\.(gz)$' | head -1`
+- pushd /
+- python -c "import limix_util; limix_util.test()"
+- popd
+deploy:
+  provider: pypi
+  skip_cleanup: true
+  user: danilo.horta
+  on:
+    branch: master
+  password:
+    secure: I/qUqkLuhprnq1EWkKUAngb+sRP9HCoiZvEpGVoFiXR7JBDYmj/uUmRKENjyCPIjulYnfY2/CzorzPeLkHDjd0VX9L8V2cyTf+e8VwvJ36PmCtvL59IwGtAf/7vYGSRQcBKzbI62Sy5gg6bRD68n8xPDLiTnnD6MAqR4RfjgiH6T1E89Or/2dun+dDE2RnboMvl1+dUS3wTDzrW8rc3gNsHJq7MxpLpbY55Jczu37TDiI5HpMAO+b4srVyF9gdLQ9RhyaTi4u++oIIQXm6bVz1in6DCFcp5h/JUldYtV5Ijousc0dHATQmqj3G6Fum6dtzN+/UcIai4Ljg9mXP72JfaMAcTzY15/kcrzuQkEOc6j2Sy0YZUnc0YMwXKf3v7HePGFzuwP0EDp75/e/lOjWD2JGhEoWoQgsznnAfSEqITOyJyJSlp41wppTQlnQNOwVyCqdOyhb2Ba4FmnLX4yylD0RKxC7tAWKXcibbXauyCrgsMLcw9UZDpJInCHmURVv7HnRcVN1WDXlNszaWpLuk2nyRdOZyRyRAwcAsiDyq44j9sHwpMtPcmhXuOFl7g6CYTDafR/1jyFmny4urf1zia+83wb9pLgNPX2uvhnsCCH2lhz070UZMPLT6cEsjzt/HW5jLOJOGUodz89X8uOVsnNYDDhM2CRRzIyLip/g68=
+notifications:
+  email: false

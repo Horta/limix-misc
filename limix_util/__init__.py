@@ -1,21 +1,10 @@
-import pkg_resources
-try:
-    __version__ = pkg_resources.get_distribution(__name__).version
-except pkg_resources.DistributionNotFound:
-    __version__ = 'unknown'
+from pkg_resources import get_distribution
+from pkg_resources import DistributionNotFound
 
-from . import dict
-from . import hdf5
-from . import inspect
-from . import object
-from . import path
-from . import pickle
-from . import report
-from . import scalar
-from . import set
-from . import string
-from . import sys
-from . import time
+try:
+    __version__ = get_distribution('limix-util').version
+except DistributionNotFound:
+    __version__ = 'unknown'
 
 from . import dict as dict_
 from . import hdf5 as hdf5_
@@ -29,3 +18,21 @@ from . import set as set_
 from . import string as string_
 from . import sys as sys_
 from . import time as time_
+
+
+def test():
+    import os
+    p = __import__('limix_util').__path__[0]
+    src_path = os.path.abspath(p)
+    old_path = os.getcwd()
+    os.chdir(src_path)
+
+    try:
+        return_code = __import__('pytest').main(['-q'])
+    finally:
+        os.chdir(old_path)
+
+    if return_code == 0:
+        print("Congratulations. All tests have passed!")
+
+    return return_code

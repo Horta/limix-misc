@@ -1,18 +1,8 @@
-from __future__ import division, print_function
 import os
 import sys
-from setuptools import setup, find_packages
+from setuptools import setup
+from setuptools import find_packages
 
-PKG_NAME = 'limix_util'
-VERSION  = '0.0.12'
-
-def module_exists(module_name):
-    try:
-        __import__(module_name)
-    except ImportError:
-        return False
-    else:
-        return True
 
 def setup_package():
     src_path = os.path.dirname(os.path.abspath(sys.argv[0]))
@@ -20,29 +10,38 @@ def setup_package():
     os.chdir(src_path)
     sys.path.insert(0, src_path)
 
-    with open('requirements.txt') as f:
-        install_requires = [row.strip() for row in f.readlines()]
-    setup_requires = []
+    needs_pytest = {'pytest', 'test', 'ptr'}.intersection(sys.argv)
+    pytest_runner = ['pytest-runner'] if needs_pytest else []
+
+    setup_requires = [] + pytest_runner
+    install_requires = ['pytest', 'scipy>=0.17', 'numpy>=1.9',
+                        'tabulate', 'limix_util', 'humanfriendly',
+                        'progressbar2', 'asciitree', 'mock']
+    tests_require = install_requires
 
     metadata = dict(
-        name=PKG_NAME,
-        maintainer="Limix Developers",
-        version=VERSION,
+        name='limix-util',
+        version='1.0.0',
+        maintainer="Danilo Horta",
         maintainer_email="horta@ebi.ac.uk",
+        license="MIT",
+        url='http://github.com/Horta/limix-util',
         packages=find_packages(),
-        license="BSD",
-        url='http://pmbio.github.io/limix/',
+        zip_safe=True,
         install_requires=install_requires,
         setup_requires=setup_requires,
-        zip_safe=True
+        tests_require=tests_require,
+        include_package_data=True,
     )
 
     try:
         from distutils.command.bdist_conda import CondaDistribution
-        metadata['distclass'] = CondaDistribution
-        metadata['conda_buildnum'] = 1
     except ImportError:
         pass
+    else:
+        metadata['distclass'] = CondaDistribution
+        metadata['conda_buildnum'] = 1
+        metadata['conda_features'] = ['mkl']
 
     try:
         setup(**metadata)
@@ -51,16 +50,4 @@ def setup_package():
         os.chdir(old_path)
 
 if __name__ == '__main__':
-    def err_msg(name):
-        msg = "Error: %s package couldn't be found." % name
-        msg += " Please, install it first so I can proceed."
-        return msg
-
-    with open('requirements-pre-setup.txt') as f:
-        requires = [row.strip() for row in f.readlines()]
-        for pkg in requires:
-            if not module_exists(pkg):
-                print(err_msg(pkg))
-                sys.exit(1)
-
     setup_package()
