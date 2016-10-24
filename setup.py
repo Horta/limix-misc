@@ -15,13 +15,13 @@ def setup_package():
 
     setup_requires = [] + pytest_runner
     install_requires = ['pytest', 'scipy>=0.17', 'numpy>=1.9',
-                        'tabulate', 'limix_util', 'humanfriendly',
+                        'tabulate', 'humanfriendly',
                         'progressbar2', 'asciitree', 'mock']
     tests_require = install_requires
 
     metadata = dict(
-        name='limix-util',
-        version='1.0.2',
+        name='limix_util',
+        version='1.0.0',
         maintainer="Danilo Horta",
         maintainer_email="horta@ebi.ac.uk",
         license="MIT",
@@ -32,6 +32,14 @@ def setup_package():
         setup_requires=setup_requires,
         tests_require=tests_require,
         include_package_data=True,
+        classifiers=[
+            "Development Status :: 5 - Production/Stable",
+            "License :: OSI Approved :: MIT License",
+            "Programming Language :: Python :: 2.7",
+            "Programming Language :: Python :: 3.4",
+            "Programming Language :: Python :: 3.5",
+            "Operating System :: OS Independent",
+        ],
     )
 
     try:

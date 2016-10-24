@@ -1,12 +1,7 @@
-from __future__ import absolute_import
+from __future__ import absolute_import as _absolute_import
 
-from pkg_resources import get_distribution
-from pkg_resources import DistributionNotFound
-
-try:
-    __version__ = get_distribution('limix-util').version
-except DistributionNotFound:
-    __version__ = 'unknown'
+from pkg_resources import get_distribution as _get_distribution
+from pkg_resources import DistributionNotFound as _DistributionNotFound
 
 from . import dict
 from . import hdf5
@@ -20,6 +15,11 @@ from . import set
 from . import string
 from . import sys
 from . import time
+
+try:
+    __version__ = _get_distribution('limix_util').version
+except _DistributionNotFound:
+    __version__ = 'unknown'
 
 
 def test():
