@@ -24,7 +24,6 @@ before_install:
 install:
 - export PATH="$HOME/miniconda/bin:$PATH"
 - source activate travisci
-- travis_retry conda install pycparser -y --name travisci
 before_script:
 - export PATH="$HOME/miniconda/bin:$PATH"
 - source activate travisci
@@ -39,11 +38,11 @@ script:
 - popd
 deploy:
   provider: pypi
-  skip_cleanup: true
-  user: danilo.horta
-  on:
-    branch: master
+  user: dhorta
   password:
-    secure: I/qUqkLuhprnq1EWkKUAngb+sRP9HCoiZvEpGVoFiXR7JBDYmj/uUmRKENjyCPIjulYnfY2/CzorzPeLkHDjd0VX9L8V2cyTf+e8VwvJ36PmCtvL59IwGtAf/7vYGSRQcBKzbI62Sy5gg6bRD68n8xPDLiTnnD6MAqR4RfjgiH6T1E89Or/2dun+dDE2RnboMvl1+dUS3wTDzrW8rc3gNsHJq7MxpLpbY55Jczu37TDiI5HpMAO+b4srVyF9gdLQ9RhyaTi4u++oIIQXm6bVz1in6DCFcp5h/JUldYtV5Ijousc0dHATQmqj3G6Fum6dtzN+/UcIai4Ljg9mXP72JfaMAcTzY15/kcrzuQkEOc6j2Sy0YZUnc0YMwXKf3v7HePGFzuwP0EDp75/e/lOjWD2JGhEoWoQgsznnAfSEqITOyJyJSlp41wppTQlnQNOwVyCqdOyhb2Ba4FmnLX4yylD0RKxC7tAWKXcibbXauyCrgsMLcw9UZDpJInCHmURVv7HnRcVN1WDXlNszaWpLuk2nyRdOZyRyRAwcAsiDyq44j9sHwpMtPcmhXuOFl7g6CYTDafR/1jyFmny4urf1zia+83wb9pLgNPX2uvhnsCCH2lhz070UZMPLT6cEsjzt/HW5jLOJOGUodz89X8uOVsnNYDDhM2CRRzIyLip/g68=
+    secure: F46PtLPVRLdAd5DjgiBsRj4cFiWeX3jT7rS9cJgyDER0JpoimMVqHkRV6VTg22k2SJfiuCCodTUGAlzoL5lDwxjLSdYVUcPHo7gSkIaDRN9Wb0jOqLvUZgLVRD9E0685AKlp5fk7xLpQDaxMgNhF3uvrR8FJ9mFNzf7X9aV9jzfh61iJqTYa1/onRrC3wdN1hKABaPRz0GeBc6wFbBuLPGkbTbIsFTScA5vWfHiQj3Ig64pHlhNL2DYuJp6aZcuNy7hZSoTHnYxf4xAb+xXigrGeGc+V3bZUNHisYABlfou56cFwWDQXAZB98ijf0/4ECgOGKWePSGjHbE1urAtRF2uYtrY5qlWLqqoC04IvzLrcg/2inMnecTEw8p2TWo+RH3DQxhOjR+VH6BwLr4PyXL73diwG54cLZIgyoAGCsUAc0iDhB6vAZG1+cqBdmcrpH11vHM8ZRAU6PDHt22MAT+tiyS4S+oCrAOQlIle6kwpZr/Uy/XFFv0E0iW99FcrLJIKYD4ysfBedAriTDrP1Z9mTSTFqAQJza2iLH/12Rsw0+omDiu2yimQmyi7UggdtZMGqENX8hfKrsgJfiCcSSdrOXMmQZv8+hZxCAj/+TFQu0Fq0YJ7GqS6PfvG80NNH8g+9gbNUqiW+lJ3bQODARut7pVTHdU/ZTEmW7Awt95M=
+  on:
+    distributions: sdist bdist_wheel
+    repo: Horta/limix-util
 notifications:
   email: false
