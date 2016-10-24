@@ -9,6 +9,7 @@ import hashlib
 import sys
 from distutils.spawn import find_executable
 
+
 @contextlib.contextmanager
 def temp_folder():
     folder = tempfile.mkdtemp()
