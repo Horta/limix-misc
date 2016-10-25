@@ -15,6 +15,7 @@ from . import set
 from . import string
 from . import sys
 from . import time
+from . import symbol
 
 try:
     __version__ = _get_distribution('limix_util').version
