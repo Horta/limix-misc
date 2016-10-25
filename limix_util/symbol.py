@@ -25,6 +25,7 @@ chi = _lup("GREEK SMALL LETTER CHI")
 psi = _lup("GREEK SMALL LETTER PSI")
 omega = _lup("GREEK SMALL LETTER OMEGA")
 nsum = _lup("N-ARY SUMMATION")
+bone = _lup("mathematical bold digit one")
 
 if __name__ == '__main__':
     for v in sorted(dir()):
