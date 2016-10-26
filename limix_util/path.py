@@ -125,7 +125,7 @@ def folder_hash(folder, exclude_files=None):
         raise EnvironmentError("Couldn't not find md5deep.")
 
     out = subprocess.check_output('md5deep -r %s' % folder, shell=True)
-    lines = sorted(out.strip('\n').split('\n'))
+    lines = sorted(out.strip(b'\n').split(b'\n'))
 
     m = hashlib.md5()
     for line in lines:
