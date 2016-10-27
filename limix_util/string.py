@@ -26,6 +26,8 @@ def summarize(s, n=64):
     return s[:int(n/2)-2] + ' ... ' + s[-int(math.ceil(n/2))+3:]
 
 def make_sure_unicode(msg):
+    if isinstance(msg, bytes):
+        return msg.decode()
     return u"%s" % __builtins__['str'](msg)
 
 if __name__ == '__main__':
