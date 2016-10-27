@@ -1,4 +1,6 @@
 from __future__ import division
+from __future__ import unicode_literals
+
 import numpy as np
 import math
 
@@ -22,6 +24,9 @@ def summarize(s, n=64):
         return s
 
     return s[:int(n/2)-2] + ' ... ' + s[-int(math.ceil(n/2))+3:]
+
+def make_sure_unicode(msg):
+    return u"%s" % __builtins__['str'](msg)
 
 if __name__ == '__main__':
     print(summarize('danilo horta danilo horta danilo horta danilo horta'))
