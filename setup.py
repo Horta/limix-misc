@@ -14,8 +14,8 @@ def setup_package():
     pytest_runner = ['pytest-runner'] if needs_pytest else []
 
     setup_requires = [] + pytest_runner
-    install_requires = ['pytest', 'scipy>=0.17', 'numpy>=1.9', 'humanfriendly',
-                        'asciitree']
+    install_requires = ['pytest', 'numpy>=1.9', 'humanfriendly',
+                        'asciitree', 'progressbar2']
     tests_require = install_requires
 
     metadata = dict(
