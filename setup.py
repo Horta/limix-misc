@@ -15,12 +15,12 @@ def setup_package():
 
     setup_requires = [] + pytest_runner
     install_requires = ['pytest', 'numpy>=1.9', 'humanfriendly',
-                        'asciitree', 'progressbar2']
+                        'asciitree', 'progressbar2', 'h5py']
     tests_require = install_requires
 
     metadata = dict(
         name='limix_util',
-        version='1.0.5',
+        version='1.0.6',
         maintainer="Danilo Horta",
         maintainer_email="horta@ebi.ac.uk",
         license="MIT",
