@@ -14,13 +14,13 @@ def setup_package():
     pytest_runner = ['pytest-runner'] if needs_pytest else []
 
     setup_requires = [] + pytest_runner
-    install_requires = ['pytest', 'numpy>=1.9', 'humanfriendly',
+    install_requires = ['numpy>=1.9', 'humanfriendly',
                         'asciitree', 'progressbar2', 'h5py']
-    tests_require = install_requires
+    tests_require = ['pytest']
 
     metadata = dict(
         name='limix_util',
-        version='1.0.6',
+        version='1.0.7',
         maintainer="Danilo Horta",
         maintainer_email="horta@ebi.ac.uk",
         license="MIT",
