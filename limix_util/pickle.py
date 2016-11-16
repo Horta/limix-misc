@@ -97,11 +97,11 @@ class SlotPickleMixin(object):
         return result
 
 def pickle(obj, filepath):
-    with bz2.open(filepath, 'wb', compresslevel=9) as f:
+    with bz2.open(filepath, 'wb', compresslevel=3) as f:
         pickle_.dump(obj, f, -1)
 
 def unpickle(filepath):
-    with bz2.open(filepath, 'rb', compresslevel=9) as f:
+    with bz2.open(filepath, 'rb', compresslevel=3) as f:
         return pickle_.load(f)
 
 def _save_cache(folder, lastmodif_hash):
