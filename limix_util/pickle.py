@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-import lzma
+import blosc
 try:
     import cPickle as pickle_
 except ImportError:
@@ -97,14 +97,13 @@ class SlotPickleMixin(object):
         return result
 
 def pickle(obj, filepath):
-    # with lzma.open(filepath, 'wb', compresslevel=3) as f:
-    with lzma.open(filepath, 'wb') as f:
-        pickle_.dump(obj, f, -1)
+    cbytes_array = blosc.compress(pickle_.dumps(obj, -1), typesize=8, cname='lz4')
+    with open(filepath, 'wb') as f:
+        f.write(cbytes_array)
 
 def unpickle(filepath):
-    # with lzma.open(filepath, 'rb', compresslevel=3) as f:
-    with lzma.open(filepath, 'rb') as f:
-        return pickle_.load(f)
+    with open(filepath, 'rb') as f:
+        return pickle_.loads(blosc.decompress(f.read()), -1)
 
 def _save_cache(folder, lastmodif_hash):
     fpath = join(folder, '.folder_hash')
