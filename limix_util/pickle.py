@@ -97,7 +97,6 @@ class SlotPickleMixin(object):
         return result
 
 def pickle(obj, filepath):
-    import pdb; pdb.set_trace()
     arr = pickle_.dumps(obj, -1)
     with open(filepath, 'wb') as f:
         s = 0
