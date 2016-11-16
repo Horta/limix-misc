@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-import gzip
+import bz2
 try:
     import cPickle as pickle_
 except ImportError:
@@ -97,11 +97,11 @@ class SlotPickleMixin(object):
         return result
 
 def pickle(obj, filepath):
-    with gzip.open(filepath, 'wb', compresslevel=9) as f:
+    with bz2.open(filepath, 'wb', compresslevel=9) as f:
         pickle_.dump(obj, f, -1)
 
 def unpickle(filepath):
-    with gzip.open(filepath, 'rb', compresslevel=9) as f:
+    with bz2.open(filepath, 'rb', compresslevel=9) as f:
         return pickle_.load(f)
 
 def _save_cache(folder, lastmodif_hash):
