@@ -97,9 +97,15 @@ class SlotPickleMixin(object):
         return result
 
 def pickle(obj, filepath):
-    cbytes_array = blosc.compress(pickle_.dumps(obj, -1), typesize=8, cname='lz4')
+    import pdb; pdb.set_trace()
+    arr = pickle_.dumps(obj, -1)
     with open(filepath, 'wb') as f:
-        f.write(cbytes_array)
+        s = 0
+        while s < len(arr):
+            e = min(s + blosc.MAX_BUFFERSIZE, len(arr))
+            carr = blosc.compress(arr[s:e], typesize=8, cname='lz4')
+            f.write(carr)
+            s = e
 
 def unpickle(filepath):
     with open(filepath, 'rb') as f:
