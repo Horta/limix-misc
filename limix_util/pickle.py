@@ -103,7 +103,7 @@ def pickle(obj, filepath):
 
 def unpickle(filepath):
     with open(filepath, 'rb') as f:
-        return pickle_.loads(blosc.decompress(f.read()), -1)
+        return pickle_.loads(blosc.decompress(f.read()))
 
 def _save_cache(folder, lastmodif_hash):
     fpath = join(folder, '.folder_hash')
