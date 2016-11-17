@@ -105,7 +105,7 @@ def pickle(obj, filepath):
         while s < len(arr):
             print("pickle: ponto 3")
             e = min(s + blosc.MAX_BUFFERSIZE, len(arr))
-            carr = blosc.compress(arr[s:e], typesize=8, cname='lz4')
+            carr = blosc.compress(arr[s:e], typesize=8)
             f.write(carr)
             s = e
 
