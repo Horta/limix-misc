@@ -114,7 +114,7 @@ def unpickle(filepath):
             if len(carr) == 0:
                 break
             arr.append(blosc.decompress(carr))
-    return pickle_.loads("".join(arr))
+    return pickle_.loads(b"".join(arr))
 
 def _save_cache(folder, lastmodif_hash):
     fpath = join(folder, '.folder_hash')
