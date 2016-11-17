@@ -109,10 +109,11 @@ def pickle(obj, filepath):
 def unpickle(filepath):
     arr = []
     with open(filepath, 'rb') as f:
-        carr = f.read(blosc.MAX_BUFFERSIZE)
-        if len(carr) == 0:
-            break
-        arr.append(blosc.decompress(carr))
+        while True:
+            carr = f.read(blosc.MAX_BUFFERSIZE)
+            if len(carr) == 0:
+                break
+            arr.append(blosc.decompress(carr))
     return pickle_.loads("".join(arr))
 
 def _save_cache(folder, lastmodif_hash):
