@@ -97,10 +97,13 @@ class SlotPickleMixin(object):
         return result
 
 def pickle(obj, filepath):
+    print("pickle: ponto 1")
     arr = pickle_.dumps(obj, -1)
+    print("pickle: ponto 2")
     with open(filepath, 'wb') as f:
         s = 0
         while s < len(arr):
+            print("pickle: ponto 3")
             e = min(s + blosc.MAX_BUFFERSIZE, len(arr))
             carr = blosc.compress(arr[s:e], typesize=8, cname='lz4')
             f.write(carr)
