@@ -101,10 +101,11 @@ def _tree(f, root_name='/', ret=False, show_chunks=False):
         add_to_node(root, ns)
 
     def child_iter(node):
-        keys = node.children.keys()
+        keys = list(node.children.keys())
         indices = np.argsort(keys)
         indices = np.asarray(indices)
-        return list(np.asarray(node.children.values())[indices])
+        vals = list(node.children.values())
+        return list(np.asarray(vals)[indices])
 
     msg = asciitree.draw_tree(root, child_iter)
     if ret:
