@@ -15,7 +15,8 @@ def setup_package():
 
     setup_requires = [] + pytest_runner
     install_requires = ['numpy>=1.9', 'humanfriendly',
-                        'asciitree', 'progressbar2', 'h5py']
+                        'asciitree', 'progressbar2', 'h5py',
+                        'blosc']
     tests_require = ['pytest']
 
     metadata = dict(
